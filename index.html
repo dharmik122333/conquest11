@@ -11,8 +11,6 @@ body {
     text-align: center;
 }
 
-h1 { margin-top: 20px; }
-
 #status {
     font-size: 20px;
     margin: 15px;
@@ -28,13 +26,8 @@ th, td {
     padding: 12px;
 }
 
-th {
-    background: #161b22;
-}
-
-tr:nth-child(even) {
-    background: #161b22;
-}
+th { background: #161b22; }
+tr:nth-child(even) { background: #161b22; }
 
 .low { color: lime; }
 .medium { color: orange; }
@@ -55,40 +48,44 @@ tr:nth-child(even) {
 <th>Threat</th>
 </tr>
 </thead>
-
 <tbody id="data-table"></tbody>
 </table>
 
 <script>
 async function loadData() {
-    const res = await fetch('/data');
-    const data = await res.json();
+    try {
+        const res = await fetch('/data');
+        const data = await res.json();
 
-    const table = document.getElementById("data-table");
-    table.innerHTML = "";
+        const table = document.getElementById("data-table");
+        table.innerHTML = "";
 
-    let high = false;
+        let high = false;
 
-    data.forEach(device => {
-        const row = `
-        <tr>
-            <td>${device.ip}</td>
-            <td>${device.packets}</td>
-            <td class="${device.threat.toLowerCase()}">${device.threat}</td>
-        </tr>`;
-        table.innerHTML += row;
+        data.forEach(device => {
+            const row = `
+            <tr>
+                <td>${device.ip}</td>
+                <td>${device.packets}</td>
+                <td class="${device.threat.toLowerCase()}">${device.threat}</td>
+            </tr>`;
+            table.innerHTML += row;
 
-        if (device.threat === "HIGH") high = true;
-    });
+            if (device.threat === "HIGH") high = true;
+        });
 
-    const status = document.getElementById("status");
+        const status = document.getElementById("status");
 
-    if (high) {
-        status.innerHTML = "🚨 System Status: UNDER THREAT";
-        status.style.color = "red";
-    } else {
-        status.innerHTML = "✅ System Status: SECURE";
-        status.style.color = "lime";
+        if (high) {
+            status.innerHTML = "🚨 UNDER THREAT";
+            status.style.color = "red";
+        } else {
+            status.innerHTML = "✅ SECURE";
+            status.style.color = "lime";
+        }
+
+    } catch (err) {
+        document.getElementById("status").innerHTML = "❌ Error loading data";
     }
 }
 
