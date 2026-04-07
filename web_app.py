@@ -1,10 +1,19 @@
 import os
+import threading
 from flask import Flask, jsonify, render_template
-from monitor import shared_data
+from monitor import shared_data, start_monitoring
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 
 app = Flask(__name__, template_folder=os.path.join(base_dir, "templates"))
+
+# ✅ Start monitoring in background
+def start_background():
+    t = threading.Thread(target=start_monitoring, daemon=True)
+    t.start()
+    print("🔥 Monitoring thread started")
+
+start_background()
 
 def get_threat(count):
     if count < 200:
