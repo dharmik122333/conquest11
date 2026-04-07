@@ -60,13 +60,14 @@ tr:nth-child(even) {
 </table>
 
 <script>
-// 🔥 Generate fake live data
+// 🔥 Fake live data generator (for GitHub Pages)
 function generateData() {
     const devices = [
-        "192.168.1.2",
-        "192.168.1.5",
-        "192.168.1.10",
-        "192.168.1.20"
+        "192.168.0.2",
+        "192.168.0.5",
+        "192.168.0.10",
+        "192.168.0.25",
+        "192.168.0.50"
     ];
 
     return devices.map(ip => {
@@ -80,7 +81,7 @@ function generateData() {
     });
 }
 
-// 🔥 Load data into table
+// 🔥 Load data into dashboard
 function loadData() {
     const data = generateData();
 
