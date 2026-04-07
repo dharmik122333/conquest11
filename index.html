@@ -11,6 +11,8 @@ body {
     text-align: center;
 }
 
+h1 { margin-top: 20px; }
+
 #status {
     font-size: 20px;
     margin: 15px;
@@ -26,8 +28,13 @@ th, td {
     padding: 12px;
 }
 
-th { background: #161b22; }
-tr:nth-child(even) { background: #161b22; }
+th {
+    background: #161b22;
+}
+
+tr:nth-child(even) {
+    background: #161b22;
+}
 
 .low { color: lime; }
 .medium { color: orange; }
@@ -48,47 +55,64 @@ tr:nth-child(even) { background: #161b22; }
 <th>Threat</th>
 </tr>
 </thead>
+
 <tbody id="data-table"></tbody>
 </table>
 
 <script>
-async function loadData() {
-    try {
-        const res = await fetch('/data');
-        const data = await res.json();
+// 🔥 Generate fake live data
+function generateData() {
+    const devices = [
+        "192.168.1.2",
+        "192.168.1.5",
+        "192.168.1.10",
+        "192.168.1.20"
+    ];
 
-        const table = document.getElementById("data-table");
-        table.innerHTML = "";
+    return devices.map(ip => {
+        const packets = Math.floor(Math.random() * 800);
 
-        let high = false;
+        let threat = "LOW";
+        if (packets > 500) threat = "HIGH";
+        else if (packets > 200) threat = "MEDIUM";
 
-        data.forEach(device => {
-            const row = `
-            <tr>
-                <td>${device.ip}</td>
-                <td>${device.packets}</td>
-                <td class="${device.threat.toLowerCase()}">${device.threat}</td>
-            </tr>`;
-            table.innerHTML += row;
+        return { ip, packets, threat };
+    });
+}
 
-            if (device.threat === "HIGH") high = true;
-        });
+// 🔥 Load data into table
+function loadData() {
+    const data = generateData();
 
-        const status = document.getElementById("status");
+    const table = document.getElementById("data-table");
+    table.innerHTML = "";
 
-        if (high) {
-            status.innerHTML = "🚨 UNDER THREAT";
-            status.style.color = "red";
-        } else {
-            status.innerHTML = "✅ SECURE";
-            status.style.color = "lime";
-        }
+    let high = false;
 
-    } catch (err) {
-        document.getElementById("status").innerHTML = "❌ Error loading data";
+    data.forEach(device => {
+        const row = `
+        <tr>
+            <td>${device.ip}</td>
+            <td>${device.packets}</td>
+            <td class="${device.threat.toLowerCase()}">${device.threat}</td>
+        </tr>`;
+        table.innerHTML += row;
+
+        if (device.threat === "HIGH") high = true;
+    });
+
+    const status = document.getElementById("status");
+
+    if (high) {
+        status.innerHTML = "🚨 System Status: UNDER THREAT";
+        status.style.color = "red";
+    } else {
+        status.innerHTML = "✅ System Status: SECURE";
+        status.style.color = "lime";
     }
 }
 
+// 🔄 Auto refresh every 2 seconds
 setInterval(loadData, 2000);
 loadData();
 </script>
